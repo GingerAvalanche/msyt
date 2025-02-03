@@ -249,24 +249,24 @@ impl Font {
 #[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Localisation {
-    Gender,
-    Plural,
+    LongVowel,
+    LongVowel2,
     Unknown(u16),
 }
 
 impl Localisation {
     pub fn as_u16(self) -> u16 {
         match self {
-            Localisation::Gender => 5,
-            Localisation::Plural => 6,
+            Localisation::LongVowel => 7,
+            Localisation::LongVowel2 => 8,
             Localisation::Unknown(x) => x,
         }
     }
 
     pub fn from_u16(u: u16) -> Self {
         match u {
-            5 => Localisation::Gender,
-            6 => Localisation::Plural,
+            7 => Localisation::LongVowel,
+            8 => Localisation::LongVowel2,
             x => Localisation::Unknown(x),
         }
     }

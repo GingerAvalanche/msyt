@@ -8,37 +8,30 @@ use msbt::Header;
 
 use serde_derive::{Deserialize, Serialize};
 
-use std::io::{Cursor, Read, Write};
+use std::io::{Cursor, Write};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
-pub struct Control201Dynamic {
-    pub len: u16,
-    pub field_2: Vec<u8>,
-}
+pub struct Control201Indefinite {}
 
-impl Control201Dynamic {
+impl Control201Indefinite {
     pub(crate) fn parse(header: &Header, mut reader: &mut Cursor<&[u8]>) -> Result<Self> {
         let len = header
             .endianness()
             .read_u16(&mut reader)
             .with_context(|| "could not read len")?;
 
-        let mut field_2 = vec![0; len as usize];
-        reader
-            .read_exact(&mut field_2)
-            .with_context(|| "could not read field_2")?;
+        if len != 0 {
+            return Err(anyhow::anyhow!("Info not length 4"));
+        }
 
-        Ok(Control201Dynamic { len, field_2 })
+        Ok(Control201Indefinite { })
     }
 
     pub(crate) fn write(&self, header: &Header, mut writer: &mut dyn Write) -> Result<()> {
         header
             .endianness()
-            .write_u16(&mut writer, self.len)
+            .write_u16(&mut writer, 0)
             .with_context(|| "could not write len")?;
-        writer
-            .write_all(&self.field_2)
-            .with_context(|| "could not write field_2")?;
 
         Ok(())
     }
